@@ -1,0 +1,71 @@
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6fa;
+    color: #1f3558;
+}
+
+/* Header */
+header {
+    background-color: #1f3558;
+    color: white;
+    text-align: center;
+    padding: 35px 20px;
+}
+
+header h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+header p {
+    font-size: 16px;
+    color: #dce5f2;
+}
+
+
+/* Main container */
+main {
+    width: 90%;
+    max-width: 900px;
+    margin: 35px auto;
+}
+
+
+/* Category */
+.category {
+    margin-bottom: 45px;
+}
+
+.category h2 {
+    background-color: #1f3558;
+    color: white;
+    font-size: 25px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+
+/* Menu item */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    background-color: white;
+    padding: 18px;
+    margin-bottom: 18px;
+
+    border-radius: 12px;
+    border: 1px solid #e0e5ec;
+
+    box-shadow: 0 3px 1
+```
