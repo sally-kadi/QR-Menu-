@@ -1,243 +1,339 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Brew Co. - Digital Menu</title>
-
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eee8df;
+            color: #33271e;
+            padding: 25px 12px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+            margin: auto;
+            padding: 25px;
+            background: #fffdf8;
+            border-radius: 25px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 25px;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+
+        .logo small {
+            display: block;
+            margin-top: 7px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            font-weight: normal;
+        }
+
+        .menu-icon, .cart {
+            font-size: 25px;
+            color: #675443;
+        }
+
+        .hero {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-height: 230px;
+            background: #e8d9c9;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            padding: 22px;
+        }
+
+        .hero-text h2 {
+            font-size: 32px;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: #33271e;
+        }
+
+        .hero-text p {
+            font-size: 13px;
+            color: #776451;
+        }
+
+        .hero img {
+            width: 43%;
+            height: 230px;
+            object-fit: cover;
+        }
+
+        .menu-title {
+            text-align: center;
+            letter-spacing: 7px;
+            font-size: 23px;
+            margin: 25px 0;
+        }
+
+        .category {
+            margin-bottom: 28px;
+        }
+
+        .category-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .category-title h3 {
+            font-size: 15px;
+            letter-spacing: 3px;
+        }
+
+        .category-title span {
+            color: #806b56;
+            font-size: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #eee5da;
+            border-radius: 15px;
+            min-height: 105px;
+        }
+
+        .menu-item img {
+            display: block;
+            width: 85px;
+            height: 85px;
+            flex-shrink: 0;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #e9dfd2;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-info h4 {
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .item-info p {
+            color: #82786e;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .menu-item strong {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: #806b56;
+            padding: 25px 0 5px;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 14px;
+                border-radius: 18px;
+            }
+
+            .logo {
+                font-size: 19px;
+                letter-spacing: 3px;
+            }
+
+            .logo small {
+                font-size: 8px;
+                letter-spacing: 2px;
+            }
+
+            .hero {
+                min-height: 180px;
+            }
+
+            .hero-text {
+                padding: 12px;
+            }
+
+            .hero-text h2 {
+                font-size: 23px;
+            }
+
+            .hero img {
+                height: 180px;
+                width: 38%;
+            }
+
+            .menu-item {
+                gap: 9px;
+                padding: 7px;
+            }
+
+            .menu-item img {
+                width: 68px;
+                height: 68px;
+            }
+
+            .item-info h4 {
+                font-size: 13px;
+            }
+
+            .item-info p {
+                font-size: 10px;
+            }
+
+            .menu-item strong {
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
+<div class="container">
 
-    <div class="menu-container">
+    <header>
+        <div class="menu-icon">☰</div>
 
-        <!-- HEADER -->
-        <header class="header">
+        <div class="logo">
+            BREW CO.
+            <small>COFFEE &amp; MORE</small>
+        </div>
 
-            <div class="menu-icon">
-                ☰
-            </div>
+        <div class="cart">🛒</div>
+    </header>
 
-            <div class="logo">
-                <h1>BREW CO.</h1>
-                <span>COFFEE & MORE</span>
-            </div>
+    <main>
 
-            <div class="cart">
-                🛒
-            </div>
-
-        </header>
-
-
-        <!-- HERO -->
         <section class="hero">
-
-            <img
-                src="images/banner.png"
-                alt="Good Coffee, Good Day"
-            >
-
+            <div class="hero-text">
+                <h2>Good Coffee,<br>Good Day.</h2>
+                <p>Made with love, just for you. ♡</p>
+            </div>
+            <img src="images/coffee.jpg" alt="Fresh coffee">
         </section>
 
+        <h2 class="menu-title">MENU</h2>
 
-        <!-- MENU TITLE -->
-        <div class="menu-title">
-
-            <span>—</span>
-
-            <h2>MENU</h2>
-
-            <span>—</span>
-
-        </div>
-
-
-        <!-- COFFEE -->
         <section class="category">
-
-            <div class="category-header">
-
+            <div class="category-title">
                 <h3>☕ COFFEE</h3>
-
                 <span>View all ›</span>
-
             </div>
 
-
-            <!-- LATTE -->
-            <div class="item">
-
-                <img
-                    src="images/coffee.jpg"
-                    alt="Latte"
-                >
-
+            <div class="menu-item">
+                <img src="images/coffee.jpg" alt="Latte">
                 <div class="item-info">
-
                     <h4>Latte</h4>
-
-                    <p>
-                        Smooth espresso with
-                        steamed milk.
-                    </p>
-
+                    <p>Smooth espresso with steamed milk.</p>
                 </div>
-
                 <strong>$3.50</strong>
-
             </div>
 
-
-            <!-- ICED COFFEE -->
-            <div class="item">
-
-                <img
-                    src="images/iced-coffee.jpg"
-                    alt="Iced Coffee"
-                >
-
+            <div class="menu-item">
+                <img src="images/iced-coffee.jpg" alt="Iced Coffee">
                 <div class="item-info">
-
                     <h4>Iced Coffee</h4>
-
-                    <p>
-                        Chilled coffee over ice.
-                    </p>
-
+                    <p>Chilled coffee over ice.</p>
                 </div>
-
                 <strong>$2.90</strong>
-
             </div>
 
-
-            <!-- AMERICANO -->
-            <div class="item">
-
-                <img
-                    src="images/americano.jpg"
-                    alt="Americano"
-                >
-
+            <div class="menu-item">
+                <img src="images/americano.jpg" alt="Americano">
                 <div class="item-info">
-
                     <h4>Americano</h4>
-
-                    <p>
-                        Espresso with hot water.
-                    </p>
-
+                    <p>Espresso with hot water.</p>
                 </div>
-
                 <strong>$2.50</strong>
-
             </div>
-
         </section>
 
-
-        <!-- NON-COFFEE -->
         <section class="category">
-
-            <div class="category-header">
-
-                <h3>🥤 NON-COFFEE</h3>
-
+            <div class="category-title">
+                <h3>🍵 NON-COFFEE</h3>
                 <span>View all ›</span>
-
             </div>
 
-
-            <!-- MATCHA -->
-            <div class="item">
-
-                <img
-                    src="images/matcha.jpg"
-                    alt="Matcha Latte"
-                >
-
+            <div class="menu-item">
+                <img src="images/matcha.jpg" alt="Matcha Latte">
                 <div class="item-info">
-
                     <h4>Matcha Latte</h4>
-
-                    <p>
-                        Smooth matcha with
-                        steamed milk.
-                    </p>
-
+                    <p>Smooth matcha with creamy milk.</p>
                 </div>
-
-                <strong>$3.90</strong>
-
+                <strong>$4.00</strong>
             </div>
-
         </section>
 
-
-        <!-- PASTRIES -->
         <section class="category">
-
-            <div class="category-header">
-
-                <h3>🥐 PASTRIES</h3>
-
+            <div class="category-title">
+                <h3>🍰 FOOD</h3>
                 <span>View all ›</span>
-
             </div>
 
-
-            <!-- COOKIE -->
-            <div class="item">
-
-                <img
-                    src="images/cookie.jpg"
-                    alt="Chocolate Cookie"
-                >
-
+            <div class="menu-item">
+                <img src="images/cake.jpg" alt="Chocolate Cake">
                 <div class="item-info">
-
-                    <h4>Chocolate Cookie</h4>
-
-                    <p>
-                        Classic cookie with
-                        chocolate chips.
-                    </p>
-
+                    <h4>Chocolate Cake</h4>
+                    <p>Soft and delicious chocolate cake.</p>
                 </div>
-
-                <strong>$1.80</strong>
-
+                <strong>$4.50</strong>
             </div>
-
         </section>
 
+    </main>
 
-        <!-- DELIVERY -->
-        <div class="delivery">
+    <footer>
+        ☕ WE DELIVER TO YOU
+        <p style="margin-top: 8px; letter-spacing: 1px;">
+            Made with love ♡
+        </p>
+    </footer>
 
-            <span>🛵</span>
-
-            <div>
-
-                <b>We deliver to you!</b>
-
-                <small>
-                    Fast & fresh to your door.
-                </small>
-
-            </div>
-
-            <span>›</span>
-
-        </div>
-
-
-    </div>
-
+</div>
 </body>
-
 </html>
