@@ -1,13 +1,61 @@
 
 <?php
-require_once __DIR__ . "/admin/db.php";
+require_once "admin/db.php";
 
-$categories = $conn->query(
-    "SELECT * FROM categories WHERE status = 1 ORDER BY id ASC"
-);
+function getProductImage($item) {
+    $name = strtolower(trim($item["name"] ?? ""));
 
-if (!$categories) {
-    die("Categories query failed: " . htmlspecialchars($conn->error));
+    $images = [
+        "latte" => "latte.jpg",
+        "cappuccino" => "coffee.jpg",
+        "iced coffee" => "iced-coffee.jpg",
+        "americano" => "americano.jpg",
+        "matcha latte" => "matcha.jpg",
+        "chocolate cake" => "cake.jpg",
+        "chocolate cookie" => "cake.jpg"
+    ];
+
+    return "images/" . ($images[$name] ?? "coffee.jpg");
+}
+
+function getCategoryName($category) {
+    foreach (["name", "category_name", "title"] as $field) {
+        if (!empty($category[$field])) {
+            return $category[$field];
+        }
+    }
+
+    return "MENU";
+}
+
+$categories = [];
+$result = $conn->query("SELECT * FROM categories");
+
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $categories[] = $row;
+    }
+}
+
+function getItemsForCategory($conn, $categoryId) {
+    $items = [];
+    $stmt = $conn->prepare(
+        "SELECT * FROM menu_items WHERE category_id = ?"
+    );
+
+    if ($stmt) {
+        $stmt->bind_param("i", $categoryId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $items[] = $row;
+        }
+
+        $stmt->close();
+    }
+
+    return $items;
 }
 ?>
 <!DOCTYPE html>
@@ -16,96 +64,90 @@ if (!$categories) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brew Co. - Digital Menu</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app-container">
 
-    <header class="header">
-        <div class="icon-btn">☰</div>
-        <div class="brand-title">
-            <h1>BREW CO.</h1>
-            <span>COFFEE &amp; MORE</span>
-        </div>
-        <div class="icon-btn">🛒</div>
-    </header>
+<header class="site-header">
+    <div class="header-icon">☰</div>
 
-    <section class="hero-banner">
-        <div class="hero-text">
-            <h2>Good Coffee,<br>Good Day.</h2>
-            <p>Made with love, just for you.</p>
-            <span class="heart-icon">♡</span>
-        </div>
-        <img class="hero-img" src="images/coffee.jpg" alt="Good Coffee, Good Day">
-    </section>
-
-    <div class="menu-header">
-        <h3>OUR MENU</h3>
+    <div class="logo">
+        <div class="logo-cup">☕</div>
+        <h1>BREW CO.</h1>
+        <p>COFFEE &amp; MORE</p>
     </div>
 
-    <?php while ($category = $categories->fetch_assoc()): ?>
-        <section class="category-section">
-            <div class="category-header">
-                <div class="category-title">
-                    <?php echo htmlspecialchars($category['name']); ?>
-                </div>
-                <span class="chevron">›</span>
+    <div class="header-icon cart-icon">🛒 <span>0</span></div>
+</header>
+
+<section class="hero">
+    
+    <img src="images/banner.png"
+         alt="Good Coffee, Good Day."
+         class="hero-img">
+
+</section>
+
+
+<main class="menu-container">
+    <h2 class="menu-title">MENU</h2>
+
+    <?php foreach ($categories as $category): ?>
+        <?php
+        $categoryId = (int)($category["id"] ?? 0);
+        $categoryName = getCategoryName($category);
+        $items = getItemsForCategory($conn, $categoryId);
+        ?>
+
+        <section class="menu-section" id="menu-<?php echo $categoryId; ?>">
+            <div class="category-heading">
+                <h3><?php echo htmlspecialchars(strtoupper($categoryName)); ?></h3>
+                <a href="#menu-<?php echo $categoryId; ?>">View all ›</a>
             </div>
 
-            <?php
-            $categoryId = (int) $category['id'];
+            <?php foreach ($items as $item): ?>
+                <article class="menu-item">
+                    <img
+                        class="product-image"
+                        src="<?php echo htmlspecialchars(getProductImage($item)); ?>"
+                        alt="<?php echo htmlspecialchars($item["name"] ?? "Menu item"); ?>"
+                        onerror="this.onerror=null;this.src='images/coffee.jpg';"
+                    >
 
-            $items = $conn->query(
-                "SELECT * FROM menu_items
-                 WHERE category_id = $categoryId AND status = 1
-                 ORDER BY id DESC"
-            );
-            ?>
-
-            <?php if ($items && $items->num_rows > 0): ?>
-                <?php while ($item = $items->fetch_assoc()): ?>
-                    <div class="item-card">
-                        <?php if (!empty($item['image'])): ?>
-                            <img
-                                class="item-img"
-                                src="images/<?php echo rawurlencode(basename($item['image'])); ?>"
-                                alt="<?php echo htmlspecialchars($item['name']); ?>"
-                            >
-                        <?php else: ?>
-                            <div class="item-img"></div>
-                        <?php endif; ?>
-
-                        <div class="item-info">
-                            <div class="item-title">
-                                <?php echo htmlspecialchars($item['name']); ?>
-                            </div>
-                            <div class="item-desc">
-                                <?php echo htmlspecialchars($item['description'] ?? ''); ?>
-                            </div>
-                        </div>
-
-                        <div class="item-price">
-                            $<?php echo number_format((float) $item['price'], 2); ?>
-                        </div>
+                    <div class="item-info">
+                        <h4><?php echo htmlspecialchars($item["name"] ?? ""); ?></h4>
+                        <p>
+                            <?php echo htmlspecialchars(
+                                $item["description"] ?? "Freshly prepared with love."
+                            ); ?>
+                        </p>
                     </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p>No available items in this category.</p>
-            <?php endif; ?>
-        </section>
-    <?php endwhile; ?>
 
-    <div class="delivery-banner">
-        <div class="delivery-left">
-            <div class="delivery-icon">🛵</div>
-            <div class="delivery-text">
-                <h4>We deliver to you!</h4>
-                <p>Fast &amp; fresh to your door.</p>
-            </div>
+                    <div class="item-price">
+                        $<?php echo number_format((float)($item["price"] ?? 0), 2); ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </section>
+    <?php endforeach; ?>
+</main>
+
+<footer class="site-footer">
+    <div class="delivery">
+        <span class="delivery-icon">🛵</span>
+        <div>
+            <h3>We deliver to you!</h3>
+            <p>Fast &amp; fresh to your door.</p>
         </div>
-        <div class="chevron">›</div>
+        <span class="delivery-arrow">›</span>
     </div>
 
-</div>
+    <div class="footer-brand">
+        <h2>BREW CO.</h2>
+        <p>Good Coffee, Good Day.</p>
+        <p>Thank you for visiting us!</p>
+    </div>
+</footer>
+
 </body>
 </html>
