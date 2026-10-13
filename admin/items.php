@@ -1,4 +1,4 @@
-```php
+
 <?php
 include "db.php";
 
@@ -15,9 +15,14 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Menu Items - Brew Co.</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background: #f5f1eb;
@@ -36,7 +41,9 @@ $result = $conn->query($sql);
             overflow-x: auto;
         }
 
-        h1 { color: #6f4e37; }
+        h1 {
+            color: #6f4e37;
+        }
 
         .add-button {
             display: inline-block;
@@ -51,12 +58,14 @@ $result = $conn->query($sql);
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 900px;
         }
 
         th, td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: left;
+            vertical-align: middle;
         }
 
         th {
@@ -64,13 +73,17 @@ $result = $conn->query($sql);
             color: white;
         }
 
-        tr:nth-child(even) { background: #f9f6f2; }
+        tr:nth-child(even) {
+            background: #f9f6f2;
+        }
 
         .item-image {
             width: 80px;
             height: 70px;
             object-fit: cover;
             border-radius: 6px;
+            display: block;
+            background: #eee;
         }
 
         .button {
@@ -85,23 +98,70 @@ $result = $conn->query($sql);
             font-size: 13px;
         }
 
-        .edit-button { background: #56806a; }
-        .delete-button { background: #c75050; }
-        .toggle-button { background: #c58b35; }
-        .activate-button { background: #56806a; }
+        .edit-button {
+            background: #56806a;
+        }
 
-        .active { color: green; font-weight: bold; }
-        .inactive { color: red; font-weight: bold; }
-        .empty { text-align: center; padding: 20px; }
+        .delete-button {
+            background: #c75050;
+        }
+
+        .toggle-button {
+            background: #c58b35;
+        }
+
+        .activate-button {
+            background: #56806a;
+        }
+
+        .active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactive {
+            color: red;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .image-error {
+            display: none;
+            color: #c75050;
+            font-size: 12px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #6f4e37;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
 <div class="container">
 
     <h1>Menu Items</h1>
 
-    <a class="add-button" href="add-item.php">+ Add Item</a>
+    <a class="add-button" href="add-item.php">
+        + Add Item
+    </a>
 
     <table>
         <thead>
@@ -118,41 +178,86 @@ $result = $conn->query($sql);
         </thead>
 
         <tbody>
+
         <?php if ($result && $result->num_rows > 0): ?>
 
             <?php while ($item = $result->fetch_assoc()): ?>
-                <?php $isActive = (int)($item['status'] ?? 0) === 1; ?>
+
+                <?php
+                $isActive = (int)($item['status'] ?? 0) === 1;
+
+                $imagePath = trim($item['image'] ?? '');
+                $imagePath = str_replace('\\', '/', $imagePath);
+                $imageName = basename($imagePath);
+
+                /*
+                 * Database image paths are stored as:
+                 * images/filename.jpg
+                 *
+                 * The admin page is inside the admin folder,
+                 * so images are loaded from ../images/.
+                 */
+                $imageUrl = '';
+
+                if ($imageName !== '' && $imageName !== '.' && $imageName !== '..') {
+                    $imageUrl = '../images/' . rawurlencode($imageName);
+                }
+                ?>
 
                 <tr>
-                    <td><?= (int)$item['id'] ?></td>
+
+                    <td>
+                        <?= (int)$item['id'] ?>
+                    </td>
 
                     <td>
                         <?= htmlspecialchars($item['category_name'] ?? 'No Category') ?>
                     </td>
 
-                    <td><?= htmlspecialchars($item['name'] ?? '') ?></td>
-
-                    <td><?= htmlspecialchars($item['description'] ?? '') ?></td>
-
-                    <td><?= htmlspecialchars($item['price'] ?? '') ?></td>
+                    <td>
+                        <?= htmlspecialchars($item['name'] ?? '') ?>
+                    </td>
 
                     <td>
-                        <?php if (!empty($item['image'])): ?>
+                        <?= htmlspecialchars($item['description'] ?? '') ?>
+                    </td>
+
+                    <td>
+                        $<?= number_format((float)($item['price'] ?? 0), 2) ?>
+                    </td>
+
+                    <td>
+                        <?php if ($imageUrl !== ''): ?>
+
                             <img
                                 class="item-image"
-                                src="../images/<?= htmlspecialchars(basename($item['image'])) ?>"
-                                alt="<?= htmlspecialchars($item['name'] ?? 'Menu item') ?>"
+                                src="<?= htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') ?>"
+                                alt="<?= htmlspecialchars($item['name'] ?? 'Menu item', ENT_QUOTES, 'UTF-8') ?>"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
                             >
+
+                            <span class="image-error">
+                                Image not found
+                            </span>
+
                         <?php else: ?>
-                            No image
+
+                            <span class="image-error" style="display:inline;">
+                                No image
+                            </span>
+
                         <?php endif; ?>
                     </td>
 
                     <td>
                         <?php if ($isActive): ?>
+
                             <span class="active">Active</span>
+
                         <?php else: ?>
+
                             <span class="inactive">Inactive</span>
+
                         <?php endif; ?>
                     </td>
 
@@ -168,31 +273,41 @@ $result = $conn->query($sql);
                         <a
                             class="button edit-button"
                             href="edit-item.php?id=<?= (int)$item['id'] ?>"
-                        >Edit</a>
+                        >
+                            Edit
+                        </a>
 
                         <a
                             class="button delete-button"
                             href="delete-item.php?id=<?= (int)$item['id'] ?>"
                             onclick="return confirm('Are you sure you want to delete this item?')"
-                        >Delete</a>
+                        >
+                            Delete
+                        </a>
                     </td>
+
                 </tr>
+
             <?php endwhile; ?>
 
         <?php else: ?>
+
             <tr>
                 <td colspan="8" class="empty">
                     No menu items found. Click Add Item to create one.
                 </td>
             </tr>
+
         <?php endif; ?>
+
         </tbody>
     </table>
 
-    <br>
-    <a href="index.php">Back to Dashboard</a>
+    <a class="back-link" href="index.php">
+        Back to Dashboard
+    </a>
 
 </div>
+
 </body>
 </html>
-```
